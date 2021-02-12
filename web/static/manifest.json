@@ -1,0 +1,39 @@
+{
+  "name": "Movie-Database",
+  "short_name": "Movie-Database",
+  "description": "App to track what movies you have watched",
+  "theme_color": "#fff",
+  "background_color": "#fff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/login",
+  "icons": [
+    {
+      "src": "images/popcorn-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "images/popcorn-96x196.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "images/popcorn-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "images/popcorn-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "images/popcorn-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

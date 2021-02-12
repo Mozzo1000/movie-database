@@ -1,0 +1,140 @@
+{% include "components/base.html" %}
+{% block content %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <article class="message is-success">
+                     <div class="message-header">
+                        <p>Success</p>
+                        <button class="delete" aria-label="delete"></button>
+                      </div>
+                      <div class="message-body">
+                          {{message}}
+                      </div>
+                </article>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="tile is-ancestor">
+        <div class="tile is-vertical">
+            <div class="tile">
+                <div class="tile is-parent is-vertical">
+                    <article class="tile is-child box">
+                        <h1 class="title">{{ movie['title'] }} ({{movie['startYear']}})
+                        <button id="share-button" style="float:right;" class="button"><i class="icon-share"></i></button>
+                        <a style="float: right;" target="_blank" href="https://imdb.com/title/{{movie['imdb_id']}}"><i style="color: #F5C518; font-size: 32px;" class="icon-imdb"></i></a>
+                        </h1>
+                        <figure class="image is-4by3">
+                            <img style="object-fit: contain;" id="poster-image" src="https://bulma.io/images/placeholders/640x480.png">
+                        </figure>
+                    </article>
+                    <article style="font-size: 18px;" class="tile is-child box">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i style="color: #FFC107;" class="icon-star"></i>
+                            </span>
+                            {% if movie['rating']['average_rating'] %}
+                                <span>{{movie['rating']['average_rating']}} |</span>
+                            {% else %}
+                                <span>No rating |</span>
+                            {% endif %}
+                            <span class="icon">
+                                <i class="icon-clock"></i>
+                            </span>
+                            {% if movie['runtimeMinutes'] %}
+                                <span>{{movie['runtimeMinutes']}}min |</span>
+                            {% else %}
+                                <span>0min |</span>
+                            {% endif %}
+                            <span class="icon">
+                                <i class="icon-video"></i>
+                            </span>
+                            <span>{{movie['genres']}}</span>
+                        </span>
+                        <button id="open-modal" class="button is-primary">Add to watched</button>
+                    </article>
+                </div>
+                <div class="tile is-parent">
+                    <article id="description-field" class="tile is-child box">
+                        <h3 class="title is-3">Description</h3>
+                        <hr>
+                        <progress id="progress-loading" class="progress is-primary" max="100">15%</progress>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Add watched movie</p>
+              <button id="modal-close" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form action="" method="post" class="box">
+                      <div class="field">
+                          <label for="" class="label">Movie</label>
+                          <div class="control">
+                              <input type="text" name="movie_id" class="input" placeholder="{{movie['imdb_id']}}" value="{{movie['imdb_id']}}">
+                          </div>
+                      </div>
+                      <div class="field">
+                          <label for="" class="label">Date</label>
+                          <div class="control">
+                              <input type="date" name="date" class="input" required>
+                          </div>
+                      </div>
+                    <div class="field">
+                          <label for="" class="label">Rating</label>
+                          <div class="control has-icons-left">
+                              <input type="number" name="rating" class="input" min="0" max="10" placeholder="0-10" required>
+                              <span class="icon is-small is-left">
+                                  <i class="icon-star"></i>
+                              </span>
+                          </div>
+                      </div>
+                    <button class="button is-success">Save</button>
+                    <button id="modal-cancel" class="button is-danger">Cancel</button>
+                    </form>
+                </section>
+          </div>
+        </div>
+
+<script defer type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/movie.js') }}"></script>
+<script type="text/javascript">
+    get_movie("{{movie['imdb_id']}}", "{{config['OMDB_API_KEY']}}").then(movie => {
+        document.getElementById('progress-loading').remove();
+        var description = document.createTextNode(movie['Plot']);
+        document.getElementById('description-field').append(description);
+        document.getElementById('poster-image').src = movie['Poster'];
+    });
+
+    share_button = document.getElementById('share-button');
+    share_button.addEventListener('click', event => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'movie-database',
+                url: window.location.href
+            }).then(() => {
+                console.log('Share complete');
+            }).catch(console.error);
+        } else {
+            //Fallback
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                share_button.textContent = 'Copied link!';
+                setTimeout(function () {
+                    share_button.innerHTML = '<i class="icon-share"></i>';
+
+                }, 2000)
+            }, function() {
+            });
+            console.log('fallback sharing');
+        }
+    });
+
+</script>
+
+{% endblock %}

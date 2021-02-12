@@ -1,0 +1,128 @@
+{% include "components/base.html" %}
+{% block content %}
+    <div id='container' class="container is-fluid">
+        <div style="padding-top: 2em;" class="field is-grouped ">
+            <h1 style="padding-right:1em" class="title">Have watched</h1>
+            <div class="control">
+                <button id="open-modal" class="button is-primary">
+                    <span class="icon">
+                        <i class="icon-plus"></i>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <div id="modal" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Add watched movie</p>
+              <button id="modal-close" class="delete" aria-label="close"></button>
+            </header>
+            <section class="modal-card-body">
+                <form action="{{url_for('watchlist')}}" method="post" class="box">
+                      <div class="field">
+                          <label for="" class="label">Movie</label>
+                          <div class="control">
+                              <input type="text" name="movie_id" class="input" required>
+                          </div>
+                      </div>
+                      <div class="field">
+                          <label for="" class="label">Date</label>
+                          <div class="control">
+                              <input type="date" name="date" class="input" required>
+                          </div>
+                      </div>
+                    <div class="field">
+                          <label for="" class="label">Rating</label>
+                          <div class="control has-icons-left">
+                              <input type="number" name="rating" class="input" min="0" max="10" placeholder="0-10" required>
+                              <span class="icon is-small is-left">
+                                  <i class="icon-star"></i>
+                              </span>
+                          </div>
+                      </div>
+                    <button class="button is-success">Save</button>
+                    <button id="modal-cancel" class="button is-danger">Cancel</button>
+                    </form>
+                </section>
+          </div>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                  <article class="message is-success">
+                      <div class="message-header">
+                        <p>Success</p>
+                        <button class="delete" aria-label="delete"></button>
+                      </div>
+                      <div class="message-body">
+                          {{message}}
+                      </div>
+                </article>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <progress id="progress-loading" class="progress is-primary" max="100">15%</progress>
+    </div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/modal.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/movie.js') }}"></script>
+<script>
+    get_movie_from_api("{{config['MOVIE_API_URL']}}", "v1/movie/watched", "{{session['access_token']}}").then(movie => {
+            document.getElementById('progress-loading').remove();
+            if (movie) {
+                columns = document.createElement('div');
+                columns.id = 'columns';
+                columns.className = 'columns is-multiline';
+                container = document.getElementById('container');
+                container.appendChild(columns);
+                movie.forEach(function(item, index) {
+
+                    column = document.createElement('div');
+                    column.className = 'column is-one-quarter';
+
+                    link = document.createElement('a');
+                    link.href = "/movie/" + item['movie_id'];
+
+                    article = document.createElement('article');
+                    article.className = 'tile is-child box';
+
+                    figure = document.createElement('figure');
+                    figure.className = 'image is-4by3';
+
+                    title = document.createElement('p');
+                    title.className = 'title';
+                    title.innerHTML = item['movie']['title'];
+
+                    subtitle = document.createElement('p');
+                    subtitle.className = 'subtitle';
+                    subtitle.innerHTML = "Released: " + item['movie']['startYear']
+
+                    image = document.createElement('img');
+                    if (item['movie']['poster'].isEmpty()) {
+                        image.src = 'https://bulma.io/images/placeholders/640x480.png';
+                    } else {
+                        image.style.objectFit = 'contain';
+                        image.src = "{{config['MOVIE_API_URL']}}" + 'v1/poster/' + item['movie_id'] + '.jpg';
+                    }
+
+                    columns = document.getElementById('columns');
+                    columns.appendChild(column);
+                    column.appendChild(link);
+                    link.appendChild(article);
+                    article.appendChild(figure);
+                    figure.appendChild(image);
+                    article.appendChild(title);
+                    article.appendChild(subtitle);
+                });
+            } else {
+                title = document.createElement('h1');
+                title.className = 'title';
+                title.innerHTML = 'You have not watched any movies';
+                document.getElementById('container').appendChild(title);
+            }
+
+        });
+</script>
+{% endblock %}

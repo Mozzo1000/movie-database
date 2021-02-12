@@ -1,0 +1,114 @@
+<nav class="navbar is-fixed-top is-hidden-mobile" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="{{ url_for('static', filename='images/popcorn.svg') }}" width="60"><strong style="text-transform: uppercase;">{{ config['WEB_DISPLAY_NAME'] }}</strong>
+        </a>
+    </div>
+    <div id="navbar-menu" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item is-tab is-active" href="/">
+                Home
+            </a>
+            <div class="navbar-item has-dropdown is-hoverable">
+                <a class="navbar-link">
+                    Watchlist
+                </a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item" href="/watchlist/watched">
+                        Watched
+                    </a>
+                </div>
+            </div>
+            <a class="navbar-item" href="/about">
+                About
+            </a>
+            <div class="navbar-item field buttons">
+                <div class="control has-icons-left">
+                    <form id="search-form" action="{{ url_for('search') }}" method="get" autocomplete="off">
+                        <input type="input" name="q" placeholder="Search.." class="input">
+                        <span class="icon is-small is-left">
+                            <i class="icon-search"></i>
+                        </span>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <div class="buttons">
+                    {% if 'username' in session %}
+                    <a class="is-link navbar-item" href="/settings">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="icon-user"></i>
+                            </span>
+                            <span>{{session['display_name']}}</span>
+                        </span>
+                    </a>
+                    <a class="button is-danger navbar-item" href="/logout">
+                        Logout
+                    </a>
+
+                    {% else %}
+                        <a class="button is-primary" href="/signup">
+                            <strong>Sign up</strong>
+                        </a>
+                        <a class="button is-light" href="/login">
+                            Login
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<nav id="mobile-navbar-top" class="navbar is-fixed-top is-hidden-desktop">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="{{ url_for('static', filename='images/popcorn.svg') }}" width="60">
+        </a>
+        {% if 'username' in session %}
+            <div class="navbar-item field is-narrow">
+                <div class="control has-icons-left">
+                    <form id="search-form" action="{{ url_for('search') }}" method="get" autocomplete="off">
+                        <input type="input" name="q" placeholder="Search.." class="input">
+                        <span class="icon is-small is-left">
+                            <i class="icon-search"></i>
+                        </span>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="navbar-item buttons">
+                <a class="button is-primary" href="/signup">
+                    <strong>Sign up</strong>
+                </a>
+                <a class="button is-light" href="/login">
+                    Login
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</nav>
+
+<nav id="mobile-navbar-bottom" class="navbar is-fixed-bottom is-hidden-desktop">
+    <div class="navbar-brand">
+        <a class="navbar-item is-expanded is-block has-text-centered" href="/">
+            <i class="icon-home"></i>
+            <p class="is-size-8">Home</p>
+        </a>
+        <a class="navbar-item is-expanded is-block has-text-centered" href="/watchlist/watched">
+            <i class="icon-video"></i>
+            <p class="is-size-8">Watched</p>
+        </a>
+        <a class="navbar-item is-expanded is-block has-text-centered" href="/search">
+            <i class="icon-search"></i>
+            <p class="is-size-8">Search</p>
+        </a>
+        <a class="navbar-item is-expanded is-block has-text-centered" href="/settings">
+            <i class="icon-menu"></i>
+            <p class="is-size-8">Menu</p>
+        </a>
+    </div>
+</nav>

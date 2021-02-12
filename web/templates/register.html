@@ -1,0 +1,68 @@
+{% include "components/base.html" %}
+{% block content %}
+    <div class="hero-body">
+      <div class="container">
+          <div class="columns is-centered">
+              <div class="column is-5-tablet is-4-desktop is-3-widescreen">
+                <h1 class="title">Sign up</h1>
+                  <form action="{{url_for('register')}}" method="post" class="box">
+                      <div class="field">
+                          <label for="" class="label">Name</label>
+                          <div class="control has-icons-left">
+                              <input type="text" name="name" class="input" required>
+                              <span class="icon is-small is-left">
+                                <i class="icon-user"></i>
+                              </span>
+                          </div>
+                      </div>
+                      <div class="field">
+                          <label for="" class="label">Username</label>
+                          <div class="control has-icons-left">
+                              <input type="text" name="username" class="input" required>
+                              <span class="icon is-small is-left">
+                                <i class="icon-mail-alt"></i>
+                              </span>
+                          </div>
+                      </div>
+                      <div class="field">
+                          <label for="" class="label">Email</label>
+                          <div class="control has-icons-left">
+                              <input type="email" name="email" class="input" required>
+                              <span class="icon is-small is-left">
+                                <i class="icon-mail-alt"></i>
+                              </span>
+                          </div>
+                      </div>
+                      <div class="field">
+                          <label for="" class="label">Password</label>
+                          <div class="control has-icons-left">
+                              <input type="password" name="password" placeholder="*******" class="input" required>
+                              <span class="icon is-small is-left">
+                                  <i class="icon-lock"></i>
+                              </span>
+                          </div>
+                      </div>
+                      <div class="field">
+                        <input class="button is-success" type="submit" value="Sign up">
+                      </div>
+                  </form>
+                  {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            {% for message in messages %}
+                              <article class="message is-success">
+                                  <div class="message-header">
+                                    <p>Success</p>
+                                    <button class="delete" aria-label="delete"></button>
+                                  </div>
+                                  <div class="message-body">
+                                      {{message}}
+                                  </div>
+                            </article>
+                            {% endfor %}
+                        {% endif %}
+                  {% endwith %}
+              </div>
+          </div>
+      </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% include "components/base.html" %}
+{% block content %}
+<div style="padding-top: 2em;" class="container">
+    <div class="columns is-fullheight">
+        {% include "components/settings_navbar.html" %}
+
+        <div class="column is-main-content">
+            Settings content
+            <a class="button is-danger navbar-item is-hidden-desktop" href="/logout">
+                Logout
+            </a>
+        </div>
+    </div>
+    </div>
+{% endblock %}

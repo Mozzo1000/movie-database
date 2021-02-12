@@ -1,0 +1,41 @@
+{% include "components/base.html" %}
+{% block content %}
+<div class="container">
+    <div class="columns is-fullheight">
+        {% include "components/settings_navbar.html" %}
+
+        <div class="column is-main-content">
+            {% include "components/success_message.html" %}
+            <form action="{{url_for('settings_showcase')}}" method="post" class="box">
+                <div class="field">
+                    <label for="" class="label">Add movie to showcase</label>
+                    <div class="control">
+                        <input type="text" name="movie_id" placeholder="movie id" class="input" required>
+                    </div>
+                </div>
+                <div class="control">
+                    <button class="button is-primary">Save</button>
+                </div>
+            </form>
+            <article class="panel is-primary">
+                <p class="panel-heading">
+                Current showcase
+                <button onclick="location.reload()" class="button is-small is-outlined">
+                    <span class="icon ">
+                        <i class="icon-arrows-cw"></i>
+                    </span>
+                  </button>
+                </p>
+                {% for showcase in showcase_list %}
+                    <a class="panel-block is-active">
+                        <span class="panel-icon">
+                            <i class="icon-video" aria-hidden="true"></i>
+                        </span>
+                        {{showcase['movie']['title']}}
+                    </a>
+                {% endfor %}
+            </article>
+        </div>
+    </div>
+    </div>
+{% endblock %}

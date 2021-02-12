@@ -1,0 +1,67 @@
+{% include "components/base.html" %}
+{% block content %}
+    <div class="container is-max-desktop">
+        <div id="search-results" class="box">
+            <p>search results for <strong>{{link}}</strong></p>
+            <progress id="progress-loading" class="progress is-primary" max="100">15%</progress>
+            <br>
+        </div>
+    </div>
+<script type="text/javascript" src="{{ url_for('static', filename='js/movie.js') }}"></script>
+<script type="text/javascript">
+    get_movie_by_title("{{link}}", "{{config['OMDB_API_KEY']}}").then(movies => {
+        document.getElementById('progress-loading').remove();
+        console.log(movies['Search']);
+        if (movies['Search']) {
+            for(var i = 0; i < movies['Search'].length; i++) {
+                var obj = movies['Search'][i];
+                console.log(obj['Title']);
+
+                const article = document.createElement('article');
+                article.className = 'media';
+
+                const div_1 = document.createElement('div')
+                div_1.className = 'media-left';
+
+                const figure = document.createElement('figure')
+                figure.className = 'image is-64x64';
+
+                const image = document.createElement('img');
+                image.src = obj['Poster'];
+
+                const div_2 = document.createElement('div');
+                div_2.className = 'media-content';
+
+                const div_3 = document.createElement('div');
+                div_3.className = 'content';
+
+                const movie_link = document.createElement('a');
+                movie_link.href = '/movie/' + obj['imdbID'];
+
+                const movie_title = document.createElement('h2');
+                const movie_title_text = document.createTextNode(obj['Title']);
+                movie_title.append(movie_title_text);
+
+                const desc_text = document.createTextNode('Released: ' + obj['Year']);
+
+                article.appendChild(div_1);
+                div_1.appendChild(figure);
+                figure.appendChild(image);
+                article.appendChild(div_2);
+                div_2.appendChild(div_3);
+
+                div_3.appendChild(movie_link);
+                movie_link.appendChild(movie_title);
+                div_3.appendChild(desc_text);
+
+                const results = document.getElementById('search-results');
+                results.appendChild(article);
+            }
+        } else {
+            const text = document.createTextNode('No search results found');
+            const results = document.getElementById('search-results');
+            results.appendChild(text);
+        }
+    });
+</script>
+{% endblock %}

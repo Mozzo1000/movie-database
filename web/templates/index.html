@@ -1,0 +1,92 @@
+{% include "components/base.html" %}
+{% block content %}
+    <div class="container">
+        {% if 'username' in session %}
+            <section class="hero">
+                <div class="hero-body">
+                    <p class="title">
+                        Hi, {{session['display_name']}}
+                    </p>
+                </div>
+            </section>
+            <h2 class="title">Showcase</h2>
+            <div id="carousel-demo" class="carousel">
+            </div>
+        {% else %}
+            <div class="columns is-vcentered">
+                <div class="column is-6 has-text-centered">
+                    <h1 class="title has-text-weight-bold">{{config['WEB_DISPLAY_NAME']}}</h1>
+                    <h2 class="subtitle">Remember what you have watched</h2>
+                    <a class="button is-primary" href="/signup">
+                            <strong>Sign up now!</strong>
+                    </a>
+                    <p class="subtitle is-6 has-text-grey-light">(it's free)</p>
+                </div>
+                <div class="column is-5 has-text-centered is-hidden-mobile">
+                    <figure class="image">
+                        <img src="{{url_for('static', filename='images/popcorn.svg') }}">
+                    </figure>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/movie.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js" defer="defer"></script>
+    <script defer="defer">
+        get_movie_from_api("{{config['MOVIE_API_URL']}}", "v1/showcase", "{{session['access_token']}}").then(movie => {
+            movie.forEach(function(item, index) {
+                showcase_item = document.createElement('div');
+                showcase_item.className = 'item-' + index;
+
+                link = document.createElement('a');
+                link.href = "/movie/" + item['movie_id'];
+
+                card = document.createElement('div');
+                card.className = 'card';
+
+                card_image = document.createElement('div');
+                card_image.className = 'card_image';
+
+                image_figure = document.createElement('figure');
+                image_figure.className = 'image is-1by1';
+
+                image = document.createElement('img');
+                if (item['movie']['poster'].isEmpty()) {
+                    image.src = 'https://bulma.io/images/placeholders/640x480.png';
+                } else {
+                    image.style.objectFit = 'contain';
+                    image.src = "{{config['MOVIE_API_URL']}}" + 'v1/poster/' + item['movie_id'] + '.jpg';
+                }
+
+                card_content = document.createElement('div');
+                card_content.className = 'card-content';
+                content = document.createElement('div');
+                content.className = 'content';
+
+                card_title = document.createElement('h3');
+                card_title.className = 'subtitle';
+                card_title.innerHTML = item['movie']['title'];
+
+
+                carousel = document.getElementById('carousel-demo');
+                carousel.appendChild(showcase_item);
+                showcase_item.appendChild(link);
+                link.appendChild(card);
+                card.appendChild(card_image);
+                card_image.appendChild(image_figure);
+                image_figure.appendChild(image);
+
+                card.appendChild(card_content);
+                card_content.appendChild(content);
+                content.appendChild(card_title);
+
+                console.log(item['movie']['title']);
+            });
+
+            bulmaCarousel.attach('#carousel-demo', {
+                slidesToScroll: 1,
+                slidesToShow: 4
+            });
+        });
+    </script>
+{% endblock %}
